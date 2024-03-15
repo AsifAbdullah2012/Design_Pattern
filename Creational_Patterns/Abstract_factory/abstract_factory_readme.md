@@ -25,3 +25,6 @@ The **Abstract Factory Pattern** is a creational design pattern that provides an
 
 Consider a UI toolkit that needs to support multiple themes (like dark mode and light mode), where each theme has its own variant of UI elements (buttons, checkboxes, etc.). The Abstract Factory Pattern allows the toolkit to instantiate theme-specific elements without binding the application's code to specific classes for each theme, enabling the client code to work with any theme at runtime, depending on the concrete factory instance it's given.
 
+The below image is taken from the **Alexander Shvets** *Dive in to design pattern*. 
+
+![alt text](image.png)
