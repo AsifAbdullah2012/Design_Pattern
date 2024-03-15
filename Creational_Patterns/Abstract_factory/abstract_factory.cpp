@@ -1,27 +1,137 @@
-# Abstract Factory Pattern
+#include<iostream>
 
-The **Abstract Factory Pattern** is a creational design pattern that provides an interface for creating families of related or dependent objects without specifying their concrete classes. It enhances modularity and scalability by making the code more flexible and easier to maintain when dealing with multiple variants of a group of products.
+using namespace std;
 
-## Key Components
 
-- **Abstract Factory**: An interface that declares methods for creating each of the abstract products.
-- **Concrete Factory**: Implements the methods of the abstract factory to create concrete products. Each one corresponds to a specific variant of products and creates all products of that variant.
-- **Abstract Product**: An interface for a type of product with multiple variants.
-- **Concrete Product**: Concrete implementations of the abstract product interface, created by a corresponding concrete factory.
-- **Client**: Uses interfaces declared by the abstract factory and abstract product classes, unaware of the concrete classes being used.
+// Abstract Product A
+class ProductA {
+public:
+    virtual ~ProductA() {}
+    virtual void doSomething() = 0;
+};
 
-## Workflow
+// Abstract Product B
+class ProductB {
+public:
+    virtual ~ProductB() {}
+    virtual void doSomethingElse() = 0;
+};
 
-1. The **client code** calls a method from a **concrete factory** to create a product, which returns a product of a specific variant to the client code, while keeping the concrete product class hidden.
-2. The client interacts with the products through the interfaces declared by the **abstract factory** and **abstract products**, remaining independent of the concrete implementations.
 
-## Benefits
+// Concrete Product A1
+class ConcreteProductA1 : public ProductA {
+public:
+    void doSomething() override {
+        // Implementation of Concrete Product A1
+        printf("Implementation of Concrete Product A1\n");
+    }
+};
 
-- Promotes the Open/Closed Principle, allowing systems to be extended with new product families without modifying existing client code.
-- Enhances flexibility and scalability by abstracting the creation process of related product families.
-- Reduces coupling between client code and specific product classes, making the system easier to extend and maintain.
+// Concrete Product A2
+class ConcreteProductA2 : public ProductA {
+public:
+    void doSomething() override {
+        // Implementation of Concrete Product A2
+        printf("Implementation of Concrete Product A2\n");
+    }
+};
 
-## Example Use Case
+// Concrete Product B1
+class ConcreteProductB1 : public ProductB {
+public:
+    void doSomethingElse() override {
+        // Implementation of Concrete Product B1
+        printf("Implementation of Concrete Product B1\n");
+    }
+};
 
-Consider a UI toolkit that needs to support multiple themes (like dark mode and light mode), where each theme has its own variant of UI elements (buttons, checkboxes, etc.). The Abstract Factory Pattern allows the toolkit to instantiate theme-specific elements without binding the application's code to specific classes for each theme, enabling the client code to work with any theme at runtime, depending on the concrete factory instance it's given.
+// Concrete Product B2
+class ConcreteProductB2 : public ProductB {
+public:
+    void doSomethingElse() override {
+        // Implementation of Concrete Product B2
+        printf("Implementation of Concrete Product B2\n");
+    }
+};
 
+// Abstract Factory
+class AbstractFactory {
+public:
+    virtual ~AbstractFactory() {}
+    virtual ProductA *createProductA() = 0;
+    virtual ProductB *createProductB() = 0;
+};
+
+
+// Concrete Factory 1
+class ConcreteFactory1 : public AbstractFactory {
+public:
+    ProductA *createProductA() override {
+        return new ConcreteProductA1();
+    }
+    
+    ProductB *createProductB() override {
+        return new ConcreteProductB1();
+    }
+};
+
+// Concrete Factory 2
+class ConcreteFactory2 : public AbstractFactory {
+public:
+    ProductA *createProductA() override {
+        return new ConcreteProductA2();
+    }
+    
+    ProductB *createProductB() override {
+        return new ConcreteProductB2();
+    }
+};
+
+
+// Client
+class Client {
+private:
+    AbstractFactory *factory;
+    
+public:
+    Client(AbstractFactory *f) : factory(f) {}
+    
+    void someOperation() {
+        ProductA *productA = factory->createProductA();
+        ProductB *productB = factory->createProductB();
+        
+        productA->doSomething();
+        productB->doSomethingElse();
+        
+        delete productA;
+        delete productB;
+    }
+    
+    ~Client() {
+        // Client is responsible for deleting the factory it was given.
+        delete factory;
+    }
+};
+
+
+
+int main()
+{
+
+    // Using ConcreteFactory1
+    AbstractFactory *factory1 = new ConcreteFactory1();
+    Client *client1 = new Client(factory1);
+    client1->someOperation();
+
+    delete client1; // Client destructor will delete factory1
+
+    // Using ConcreteFactory2
+    AbstractFactory *factory2 = new ConcreteFactory2();
+    Client *client2 = new Client(factory2);
+    client2->someOperation();
+
+    delete client2; // Client destructor will delete factory2
+
+    return 0;
+
+}
